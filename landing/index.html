@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentLoopGuard — Stop AI Agent Loops from Burning Your API Budget</title>
+    <meta name="description" content="One-line Python SDK that detects infinite loops, runaway costs, and stuck AI agents — kills them before they kill your API bill.">
+    
+    <!-- OpenGraph -->
+    <meta property="og:title" content="AgentLoopGuard — Stop AI Agent Loops from Burning Your API Budget">
+    <meta property="og:description" content="One-line Python SDK that detects infinite loops, runaway costs, and stuck agents — kills them before they kill your API bill.">
+    <meta property="og:image" content="https://agentloopguard.com/og-image.png">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link rel="canonical" href="https://agentloopguard.com/">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "AgentLoopGuard",
+          "operatingSystem": "All",
+          "applicationCategory": "DeveloperApplication",
+          "description": "Python SDK that detects and kills infinite AI agent loops.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What counts as an agent loop?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "When an AI agent repeats the same action, produces near-identical output, or oscillates between states without making progress."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does it work with OpenAI / Anthropic / LangChain?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. It wraps any Python function or LLM client. Framework-agnostic."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Will it slow down my agent?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Detection adds <1ms per call. It runs in-process, no network latency."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need the cloud version?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The open-source SDK works fully offline. Cloud adds dashboards and alerts."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens when a loop is detected?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "By default, it raises a LoopDetectedError. You can configure it to log, call a webhook, or run a custom callback."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is it really free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The core SDK is MIT-licensed, free forever. Cloud monitoring is prepaid, no subscription."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <div class="logo">AgentLoopGuard</div>
+            <nav>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Stop AI Agents From Burning Your Budget</h1>
+                <p class="subtitle">One-line Python SDK that detects infinite loops, runaway costs, and stuck agents — kills them before they kill your API bill.</p>
+                
+                <div class="cta-group">
+                    <div class="code-copy">
+                        <code>pip install agentloopguard</code>
+                        <button id="copy-btn" title="Copy to clipboard">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                    </div>
+                    <a href="https://github.com/agentloopguard/agentloopguard" class="btn btn-outline">View on GitHub</a>
+                </div>
+
+                <div class="terminal-demo">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="title">terminal</span>
+                    </div>
+                    <div class="terminal-body" id="hero-terminal">
+                        <div class="line"><span class="prompt">$</span> python agent_run.py</div>
+                        <div class="line typing">Initializing agent loop...</div>
+                        <div class="line delay-1">Executing Tool: WebSearch(query="latest news")</div>
+                        <div class="line delay-2">Executing Tool: WebSearch(query="latest news")</div>
+                        <div class="line delay-3">Executing Tool: WebSearch(query="latest news")</div>
+                        <div class="line alert delay-4"><span class="icon">🛡</span> Loop detected: Exact Repeat. Execution killed.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="problem" class="problem section-reveal">
+            <div class="container">
+                <h2>Your Agent Ran All Night. Your Bill Didn't Sleep Either.</h2>
+                
+                <div class="terminal-cost-demo">
+                    <div class="cost-line">Cost: $<span class="cost-value" id="cost-1">0.12</span></div>
+                    <div class="cost-line">Cost: $<span class="cost-value" id="cost-2">1.50</span></div>
+                    <div class="cost-line dim">Cost: $<span class="cost-value">15.00</span></div>
+                    <div class="cost-line dim">Cost: $<span class="cost-value">47.00</span></div>
+                    <div class="cost-line dim">Cost: $<span class="cost-value">183.00</span></div>
+                    <div class="cost-line dim">Cost: $<span class="cost-value">412.00</span></div>
+                    
+                    <div class="intervention" id="intervention-msg">
+                        <span class="icon">🛡</span> Loop detected. Execution killed at $1.50.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works section-reveal">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <h3>1. Install</h3>
+                        <pre><code>pip install agentloopguard</code></pre>
+                    </div>
+                    <div class="step">
+                        <h3>2. Wrap</h3>
+                        <pre><code>from agentloopguard import LoopGuard
+
+guard = LoopGuard(max_repeats=3)
+
+@guard.monitor
+def run_agent_step():
+    # your agent logic here
+    pass</code></pre>
+                    </div>
+                    <div class="step">
+                        <h3>3. Relax</h3>
+                        <p>LoopGuard watches every call. Loops die. Your budget lives.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="engines section-reveal">
+            <div class="container">
+                <h2>Detection Engines</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Exact Repeat Detection</h3>
+                        <p>Same tool call 3x in a row? Killed.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Semantic Similarity</h3>
+                        <p>Output 95% identical? That's a loop. Killed.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Cost Velocity</h3>
+                        <p>Burning $2/min? That's not normal. Killed.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Oscillation Detection</h3>
+                        <p>A→B→A→B→A? Going nowhere. Killed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing section-reveal">
+            <div class="container">
+                <h2>Pricing</h2>
+                <p class="pricing-subtitle">No subscription. Buy credits. Use them whenever.</p>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>Open Source</h3>
+                        <div class="price">Free</div>
+                        <p class="price-desc">Forever</p>
+                        <ul>
+                            <li>Full SDK</li>
+                            <li>All detectors</li>
+                            <li>Unlimited local use</li>
+                        </ul>
+                        <a href="https://github.com/agentloopguard/agentloopguard" class="btn btn-outline">Get Source</a>
+                    </div>
+                    <div class="card">
+                        <h3>Starter</h3>
+                        <div class="price">$10</div>
+                        <p class="price-desc">Prepaid credits</p>
+                        <ul>
+                            <li>10,000 cloud runs</li>
+                            <li>Usage dashboard</li>
+                            <li>Email alerts</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline">Buy Credits</a>
+                    </div>
+                    <div class="card pro">
+                        <h3>Pro</h3>
+                        <div class="price">$25</div>
+                        <p class="price-desc">Prepaid credits</p>
+                        <ul>
+                            <li>30,000 cloud runs</li>
+                            <li>Priority alerts</li>
+                            <li>Team budgets</li>
+                            <li>Slack integration</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">Buy Credits</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq section-reveal">
+            <div class="container">
+                <h2>FAQ</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <h3>What counts as an agent loop?</h3>
+                        <p>When an AI agent repeats the same action, produces near-identical output, or oscillates between states without making progress.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Does it work with OpenAI / Anthropic / LangChain?</h3>
+                        <p>Yes. It wraps any Python function or LLM client. Framework-agnostic.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Will it slow down my agent?</h3>
+                        <p>No. Detection adds &lt;1ms per call. It runs in-process, no network latency.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Do I need the cloud version?</h3>
+                        <p>No. The open-source SDK works fully offline. Cloud adds dashboards and alerts.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>What happens when a loop is detected?</h3>
+                        <p>By default, it raises a <code>LoopDetectedError</code>. You can configure it to log, call a webhook, or run a custom callback.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Is it really free?</h3>
+                        <p>The core SDK is MIT-licensed, free forever. Cloud monitoring is prepaid, no subscription.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">PyPI</a>
+                <a href="#">MIT License</a>
+            </div>
+            <p>Built by developers who got a $400 surprise API bill.</p>
+            <p>&copy; 2026 AgentLoopGuard</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
