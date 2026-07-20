@@ -2,7 +2,7 @@
 
 **Detect and kill infinite AI agent loops before they burn your API budget.**
 
-[![PyPI version](https://img.shields.io/pypi/v/agentloopguard.svg)](https://pypi.org/project/agentloopguard/)
+[![PyPI version](https://img.shields.io/pypi/v/agentloopguard-sdk.svg)](https://pypi.org/project/agentloopguard-sdk/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -44,7 +44,7 @@ with guard.session() as session:
 ## Installation
 
 ```bash
-pip install agentloopguard
+pip install agentloopguard-sdk
 ```
 
 ## Four Detection Engines

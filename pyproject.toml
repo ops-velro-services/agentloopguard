@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agentloopguard"
+name = "agentloopguard-sdk"
 dynamic = ["version"]
 description = "Detect and kill infinite AI agent loops before they burn your API budget."
 readme = "README.md"
