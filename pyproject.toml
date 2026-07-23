@@ -7,7 +7,7 @@ name = "agentloopguard-sdk"
 dynamic = ["version"]
 description = "Detect and kill infinite AI agent loops before they burn your API budget."
 readme = "README.md"
-license = "MIT"
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
 authors = [
     { name = "Mohammed Rizwan Shaik", email = "shaikmohammedrizwanfaisal@gmail.com" },
@@ -27,7 +27,6 @@ keywords = [
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -42,11 +41,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mohammedshaik/agentloopguard"
-Documentation = "https://github.com/mohammedshaik/agentloopguard#readme"
-Repository = "https://github.com/mohammedshaik/agentloopguard"
-Issues = "https://github.com/mohammedshaik/agentloopguard/issues"
-Changelog = "https://github.com/mohammedshaik/agentloopguard/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ops-velro-services/agentloopguard"
+Documentation = "https://github.com/ops-velro-services/agentloopguard#readme"
+Repository = "https://github.com/ops-velro-services/agentloopguard"
+Issues = "https://github.com/ops-velro-services/agentloopguard/issues"
+Changelog = "https://github.com/ops-velro-services/agentloopguard/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "VERSION"

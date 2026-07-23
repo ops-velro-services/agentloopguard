@@ -1,0 +1,31 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install ".[dev]" build
+      - run: python -m pytest --cov=agentloopguard --cov-report=term-missing --cov-fail-under=80
+      - run: python -m ruff check .
+      - run: python -m mypy src
+      - run: python -m build
+      - name: Smoke-test built wheel in a clean environment
+        run: |
+          python -m venv .smoke-venv
+          .smoke-venv/bin/python -m pip install --no-deps dist/*.whl
+          .smoke-venv/bin/python -c "import agentloopguard; print(agentloopguard.__version__)"

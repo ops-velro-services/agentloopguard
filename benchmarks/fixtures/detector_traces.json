@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic, anonymized traces used to measure built-in detector behavior.",
+  "traces": [
+    {
+      "id": "exact-repeat-search",
+      "category": "exact_repeats",
+      "labels": ["exact_repeat"],
+      "steps": [
+        {"tool_name": "search", "tool_args": {"query": "invoice status"}, "output": "queued"},
+        {"tool_name": "search", "tool_args": {"query": "invoice status"}, "output": "still queued"},
+        {"tool_name": "search", "tool_args": {"query": "invoice status"}, "output": "request timed out"}
+      ]
+    },
+    {
+      "id": "lexical-repeat-summary",
+      "category": "lexical_repeats",
+      "labels": ["lexical_similarity"],
+      "steps": [
+        {"tool_name": "draft", "tool_args": {"revision": 1}, "output": "The payment is pending finance approval."},
+        {"tool_name": "review", "tool_args": {"revision": 2}, "output": "The payment is pending finance approval."},
+        {"tool_name": "summarize", "tool_args": {"revision": 3}, "output": "The payment is pending finance approval."}
+      ]
+    },
+    {
+      "id": "alternating-tool-oscillation",
+      "category": "oscillations",
+      "labels": ["oscillation"],
+      "steps": [
+        {"tool_name": "enable_feature", "tool_args": {"name": "cache"}, "output": "enabled"},
+        {"tool_name": "disable_feature", "tool_args": {"name": "cache"}, "output": "disabled"},
+        {"tool_name": "enable_feature", "tool_args": {"name": "cache"}, "output": "enabled again"},
+        {"tool_name": "disable_feature", "tool_args": {"name": "cache"}, "output": "disabled again"},
+        {"tool_name": "enable_feature", "tool_args": {"name": "cache"}, "output": "enabled once more"},
+        {"tool_name": "disable_feature", "tool_args": {"name": "cache"}, "output": "disabled once more"}
+      ]
+    },
+    {
+      "id": "rapid-cost-growth",
+      "category": "cost_velocity",
+      "labels": ["cost_velocity"],
+      "steps": [
+        {"timestamp": 1000.0, "cost_usd": 0.2},
+        {"timestamp": 1030.0, "cost_usd": 0.9}
+      ]
+    },
+    {
+      "id": "legitimate-retries",
+      "category": "legitimate_retries",
+      "labels": [],
+      "steps": [
+        {"tool_name": "fetch", "tool_args": {"attempt": 1}, "output": "temporary network error"},
+        {"tool_name": "fetch", "tool_args": {"attempt": 2}, "output": ""},
+        {"tool_name": "fetch", "tool_args": {"attempt": 3}, "output": "request succeeded"}
+      ]
+    },
+    {
+      "id": "progressive-refinement",
+      "category": "progressive_refinement",
+      "labels": [],
+      "steps": [
+        {"tool_name": "draft", "tool_args": {"version": 1}, "output": "Outline the deployment steps."},
+        {"tool_name": "draft", "tool_args": {"version": 2}, "output": "Add rollback criteria and owners to the deployment plan."},
+        {"tool_name": "draft", "tool_args": {"version": 3}, "output": "Publish the reviewed deployment plan after approval."}
+      ]
+    },
+    {
+      "id": "non-looping-tool-sequence",
+      "category": "non_looping_tool_sequences",
+      "labels": [],
+      "steps": [
+        {"tool_name": "search", "tool_args": {"query": "service health"}, "output": "three incidents found"},
+        {"tool_name": "inspect", "tool_args": {"incident": "INC-1"}, "output": "database latency is elevated"},
+        {"tool_name": "notify", "tool_args": {"team": "platform"}, "output": "incident notification prepared"}
+      ]
+    }
+  ]
+}
