@@ -92,10 +92,10 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-009 — Add pricing-provider abstraction
 
-- Status: ready
-- Auto-eligible: no
+- Status: done
+- Auto-eligible: yes
 - Depends on: ALG-008 (done), OWN-004 (done)
-- Unblocked 2026-07-23: both dependencies are complete (ALG-008 done; OWN-004 pricing policy approved 2026-07-21). Dependency-based blocker cleared; auto-eligible remains `no` pending owner confirmation that implementing the approved policy needs no further pricing decision.
+- Unblocked and auto-eligible 2026-07-23: dependencies complete and owner confirmed auto-eligibility on 2026-07-23.
 - Current-state note (verified 2026-07-23): `estimate_cost()` in `utils.py` returns `0.0` for any model outside the small hardcoded table, so unknown models fail **open** even when `max_cost_usd` is set — this violates the approved OWN-004 fail-closed policy and is the top open correctness gap.
 - Scope: custom price provider, explicit unknown-model policy, versioned built-in snapshot with source date, user-supplied actual cost, and model alias matching without substring collisions.
 - Acceptance: unknown models never silently appear free unless explicitly configured; price source and effective date are visible; custom/actual cost overrides work.
@@ -131,10 +131,11 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-013 — Ship maintained framework adapters
 
-- Status: blocked
+- Status: ready
 - Auto-eligible: no
-- Depends on: ALG-003, ALG-008, OWN-005
-- Scope: select and implement the first two adapters based on user interviews; pin a supported-version matrix and run integration tests.
+- Depends on: ALG-003 (done), ALG-008 (done), OWN-005 (done)
+- Unblocked 2026-07-23: dependencies complete (ALG-003 done, ALG-008 done, OWN-005 strategy decided 2026-07-23).
+- Scope: select and implement the first two adapters based on live user feedback; pin a supported-version matrix and run integration tests.
 - Acceptance: two real end-to-end examples execute against current supported versions; unsupported behaviors are explicit.
 - Verification: scheduled integration CI.
 
@@ -149,16 +150,17 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-015 — Establish security and release hygiene
 
-- Status: blocked
+- Status: ready
 - Auto-eligible: no
-- Depends on: ALG-006, OWN-002, OWN-006
+- Depends on: ALG-006 (done), OWN-002 (done), OWN-006 (done)
+- Unblocked 2026-07-23: dependencies complete (ALG-006 done, OWN-002 verified 2026-07-23, OWN-006 approved 2026-07-21).
 - Scope: `SECURITY.md`, contribution guide, code of conduct, changelog/release checklist, trusted publishing, provenance/attestations, dependency review, and secret scanning.
 - Acceptance: documented disclosure route and repeatable tagged release with owner-approved credentials and controls.
 - Verification: test release or dry run, then owner-approved production release.
 
 ### ALG-021 — Define and document duration-enforcement behavior
 
-- Status: ready
+- Status: done
 - Auto-eligible: yes
 - Depends on: ALG-007
 - Added 2026-07-23 (status review): the duration limit is only checked when a step is recorded, so a hung tool or model call cannot be interrupted mid-call. This is a real behavioral limitation that must not be overstated.
@@ -166,13 +168,24 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 - Acceptance: README and API docs state the inter-step nature of the duration check explicitly; any watchdog work is scoped as a separate proposed item with an owner decision noted.
 - Verification: docs walkthrough; test asserting a between-steps duration breach raises `DurationExceededError` while an in-step hang is documented as out of scope.
 
+### ALG-022 — Design cooperative watchdog/cancellation timer for in-step duration enforcement
+
+- Status: blocked
+- Auto-eligible: no
+- Depends on: ALG-021, OWN-010
+- Added 2026-07-23 (ALG-021 follow-up): Preemptive in-step cancellation requires background watchdog threads or async task signals, which introduces concurrency and thread-safety complexity.
+- Scope: evaluate cooperative cancellation tokens / watchdog timer thread patterns for interrupting hung tool execution; present design options for owner review before implementing.
+- Acceptance: architecture proposal for preemptive/watchdog duration enforcement reviewed by owner; no unvetted background thread interruption added to base guard.
+- Verification: owner decision on preemptive cancellation architecture.
+
 ## P2 — growth experiments, not assumptions
 
 ### ALG-016 — Replace pricing cards with design-partner validation
 
-- Status: blocked
+- Status: ready
 - Auto-eligible: no
-- Depends on: ALG-001, OWN-003
+- Depends on: ALG-001 (done), OWN-003 (done)
+- Unblocked 2026-07-23: dependencies complete (ALG-001 done, OWN-003 done).
 - Scope: waitlist/design-partner CTA, analytics with consent, concise use-case questions, and no promise of unavailable cloud functionality.
 - Acceptance: CTA has a real destination, privacy disclosure, event definitions, and an owner-reviewed follow-up process.
 - Verification: form and analytics test without collecting production data during automation.
@@ -188,12 +201,13 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-018 — Run customer discovery and decide the commercial product
 
-- Status: blocked
+- Status: ready
 - Auto-eligible: no
-- Depends on: OWN-005
-- Scope: synthesize interviews around centralized policy, team budgets, alerting, audit events, and hosted analytics; recommend build/no-build and packaging.
-- Acceptance: at least ten relevant interviews, problem-frequency evidence, willingness-to-pay signals, and a written decision memo.
-- Verification: owner reviews anonymized notes and decision.
+- Depends on: OWN-005 (done)
+- Unblocked 2026-07-23: dependency complete (OWN-005 strategy decided 2026-07-23).
+- Scope: synthesize live organic user feedback around centralized policy, team budgets, alerting, audit events, and hosted analytics; recommend build/no-build and packaging.
+- Acceptance: real user feedback analysis, problem-frequency evidence, willingness-to-pay signals, and a written decision memo.
+- Verification: owner reviews feedback summary and decision.
 
 ### ALG-019 — Evaluate additional language SDKs
 

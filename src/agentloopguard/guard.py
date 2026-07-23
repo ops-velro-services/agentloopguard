@@ -21,8 +21,8 @@ from agentloopguard.detectors import (
     OscillationDetector,
 )
 from agentloopguard.exceptions import LoopDetectedError
+from agentloopguard.pricing import PriceProviderType, resolve_cost
 from agentloopguard.schema import StepEvent, TelemetryEvent
-from agentloopguard.utils import estimate_cost
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,8 @@ class _BudgetConfig:
     max_cost_usd: Optional[float]
     max_tokens: Optional[int]
     max_duration_seconds: Optional[int]
+    price_provider: Optional[PriceProviderType]
+    unknown_model_policy: Optional[str]
     clock: Callable[[], float]
 
 
@@ -47,6 +49,8 @@ class GuardSession:
             max_cost_usd=guard._budget_config.max_cost_usd,
             max_tokens=guard._budget_config.max_tokens,
             max_duration_seconds=guard._budget_config.max_duration_seconds,
+            price_provider=guard._budget_config.price_provider,
+            unknown_model_policy=guard._budget_config.unknown_model_policy,
             clock=guard._budget_config.clock,
         )
         self._lock = threading.Lock()
@@ -68,12 +72,29 @@ class GuardSession:
             raise ValueError("timestamp must be a finite number")
         recorded_step["timestamp"] = float(timestamp)
 
+        actual_cost = recorded_step.get("actual_cost_usd")
+        if (
+            actual_cost is None
+            and "cost_usd" in recorded_step
+            and isinstance(step, Mapping)
+            and not isinstance(step, StepEvent)
+        ):
+            actual_cost = recorded_step.get("cost_usd")
+
         model = recorded_step.get("model", "unknown")
         input_tokens = recorded_step.get("input_tokens", 0)
         output_tokens = recorded_step.get("output_tokens", 0)
         validate_usage_inputs(model, input_tokens, output_tokens)
         with self._lock:
-            cost_usd = estimate_cost(model, input_tokens, output_tokens)
+            estimate = resolve_cost(
+                model,
+                input_tokens,
+                output_tokens,
+                actual_cost_usd=actual_cost,
+                price_provider=self.guard.price_provider,
+                unknown_model_policy=self.guard.unknown_model_policy,
+            )
+            cost_usd = estimate.cost_usd
             known_keys = {
                 "schema_version",
                 "session_id",
@@ -82,6 +103,10 @@ class GuardSession:
                 "input_tokens",
                 "output_tokens",
                 "cost_usd",
+                "cost_source",
+                "pricing_snapshot_version",
+                "pricing_effective_date",
+                "actual_cost_usd",
                 "tool_name",
                 "tool_args",
                 "output",
@@ -94,6 +119,9 @@ class GuardSession:
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 cost_usd=cost_usd,
+                cost_source=estimate.source,
+                pricing_snapshot_version=estimate.snapshot_version,
+                pricing_effective_date=estimate.effective_date,
                 tool_name=recorded_step.get("tool_name"),
                 tool_args=recorded_step.get("tool_args"),
                 output=recorded_step.get("output"),
@@ -107,7 +135,7 @@ class GuardSession:
                 del self.call_history[: -self.guard._history_window]
 
             # Update Budget
-            self.budget.record(model, input_tokens, output_tokens)
+            self.budget.record(model, input_tokens, output_tokens, actual_cost_usd=actual_cost)
             self.guard._emit_event(
                 TelemetryEvent(
                     name="agentloopguard.step",
@@ -119,6 +147,7 @@ class GuardSession:
                         "agentloopguard.input_tokens": event.input_tokens,
                         "agentloopguard.output_tokens": event.output_tokens,
                         "agentloopguard.cost_usd": event.cost_usd,
+                        "agentloopguard.cost_source": event.cost_source or "",
                         "agentloopguard.tool.name": event.tool_name or "",
                     },
                 )
@@ -170,12 +199,24 @@ class GuardSession:
 
 
 class LoopGuard:
+    """Main circuit-breaker guard for agent sessions.
+
+    Note:
+        `max_duration_seconds` is evaluated as an inter-step check whenever
+        `record()` is called on a session. If an external model or tool call
+        hangs mid-step, execution inside that call is not interrupted; a
+        `DurationExceededError` is raised on the subsequent step recorded after
+        the duration limit expires.
+    """
+
     def __init__(
         self,
         max_iterations: Optional[int] = None,
         max_cost_usd: Optional[float] = None,
         max_tokens: Optional[int] = None,
         max_duration_seconds: Optional[int] = None,
+        price_provider: Optional[PriceProviderType] = None,
+        unknown_model_policy: Optional[str] = None,
         on_alert: str = "raise",
         alert_callback: Optional[Callable[[DetectionResult], None]] = None,
         event_exporter: Optional[Callable[[TelemetryEvent], None]] = None,
@@ -200,17 +241,27 @@ class LoopGuard:
             max_cost_usd=max_cost_usd,
             max_tokens=max_tokens,
             max_duration_seconds=max_duration_seconds,
+            price_provider=price_provider,
+            unknown_model_policy=unknown_model_policy,
             clock=clock,
         )
         self.on_alert = on_alert
         self.alert_callback = alert_callback
         self.event_exporter = event_exporter
+        self.price_provider = price_provider
+        self.unknown_model_policy = (
+            unknown_model_policy
+            if unknown_model_policy is not None
+            else ("fail_closed" if max_cost_usd is not None else "zero")
+        )
 
         self._budget_config = _BudgetConfig(
             max_iterations=max_iterations,
             max_cost_usd=max_cost_usd,
             max_tokens=max_tokens,
             max_duration_seconds=max_duration_seconds,
+            price_provider=price_provider,
+            unknown_model_policy=self.unknown_model_policy,
             clock=clock,
         )
 

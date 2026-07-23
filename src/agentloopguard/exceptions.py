@@ -33,3 +33,9 @@ class DurationExceededError(AgentLoopGuardError):
     """Raised when max duration is exceeded."""
 
     pass
+
+
+class UnknownModelError(AgentLoopGuardError, ValueError):
+    """Raised when an unknown model is encountered under a fail-closed pricing policy."""
+
+    pass

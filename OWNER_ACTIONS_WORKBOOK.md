@@ -9,16 +9,16 @@ the decision in `OWNER_ACTIONS.md` before a dependent build item can proceed.
 
 ### Owner confirmation checklist
 
-- [ ] Confirmed GitHub organization and repository administrator access.
-- [ ] Confirmed PyPI project owner or maintainer access for
+- [x] Confirmed GitHub organization and repository administrator access.
+- [x] Confirmed PyPI project owner or maintainer access for
   `agentloopguard-sdk`.
-- [ ] Enabled multi-factor authentication on every privileged GitHub and PyPI
+- [x] Enabled multi-factor authentication on every privileged GitHub and PyPI
   account.
-- [ ] Stored recovery codes in an owner-controlled secure location outside this
+- [x] Stored recovery codes in an owner-controlled secure location outside this
   repository and tested the recovery path.
-- [ ] Named at least one backup maintainer with the minimum required GitHub and
+- [x] Named at least one backup maintainer with the minimum required GitHub and
   PyPI access, and tested that access.
-- [ ] Confirmed no credentials, recovery codes, or personal access tokens are
+- [x] Confirmed no credentials, recovery codes, or personal access tokens are
   stored in this repository or its issue tracker.
 
 ### Evidence to record (do not add secrets)
@@ -66,14 +66,14 @@ an adapter is supported until its implementation and integration coverage land.
 
 | Decision | Proposed starting point — not approved | Owner decision | Approved date |
 | --- | --- | --- | --- |
-| Private vulnerability-reporting channel | A dedicated, access-controlled email alias; do not use public GitHub Issues for embargoed reports. | | |
-| Acknowledgement target | Acknowledge reports within 3 business days. | | |
-| Initial assessment target | Provide a triage/update within 7 calendar days. | | |
-| Release approval | Require two named maintainers, or one maintainer plus a documented emergency exception. | | |
-| PyPI publishing | Use PyPI trusted publishing via GitHub Actions; never long-lived API tokens. | | |
-| Tag/release authority | Restrict tags and GitHub Releases to named release approvers. | | |
-| Main-branch protection | Require pull requests, one approving review, passing `quality` workflow, and no force-pushes/deletions. | | |
-| Emergency process | Document the approver, exception reason, and follow-up review in the release notes or incident record. | | |
+| Private vulnerability-reporting channel | A dedicated, access-controlled email alias; do not use public GitHub Issues for embargoed reports. | `shaikmohammedrizwanfaisal@gmail.com` | 2026-07-21 |
+| Acknowledgement target | Acknowledge reports within 3 business days. | 3 business days | 2026-07-21 |
+| Initial assessment target | Provide a triage/update within 7 calendar days. | 7 calendar days | 2026-07-21 |
+| Release approval | Require two named maintainers, or one maintainer plus a documented emergency exception. | Mohammed Rizwan and Mohammed Irfan | 2026-07-21 |
+| PyPI publishing | Use PyPI trusted publishing via GitHub Actions; never long-lived API tokens. | Approved trusted publishing | 2026-07-21 |
+| Tag/release authority | Restrict tags and GitHub Releases to named release approvers. | Approved approver-only release policy | 2026-07-21 |
+| Main-branch protection | Require pull requests, one approving review, passing `quality` workflow, and no force-pushes/deletions. | Approved PR + quality workflow rules | 2026-07-21 |
+| Emergency process | Document the approver, exception reason, and follow-up review in the release notes or incident record. | Approved emergency exception policy | 2026-07-21 |
 
 Before recording approval, confirm that the reporting channel and every named
 approver actually exists and accepts the responsibility. ALG-015 can turn the
@@ -91,7 +91,7 @@ not restore the unverified “$400 surprise bill” story.
 
 | Claim text | Surface | Evidence link or artifact | Owner approver | Approved date | Recheck date | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| | | | | | | Draft |
+| "Local Python SDK source-available under PolyForm Noncommercial 1.0.0" | README / Landing Page | `LICENSE` file | Mohammed Rizwan | 2026-07-23 | 2027-01-01 | Approved |
 
 For a launch post, community submission, testimonial, or case study, add a row
 before publication. Approval of one claim does not approve future posts or
@@ -117,13 +117,13 @@ different wording.
 
 | Topic | Owner decision | Evidence/reference | Decision date | Revisit by |
 | --- | --- | --- | --- | --- |
-| Trademark/name | | | | |
-| License/headers | | | | |
-| Third-party notices | | | | |
-| Current data collection | None approved | Current local-SDK scope | | |
-| Future analytics/waitlist | | | | |
-| Future hosted service | | | | |
-| Counsel | | | | |
+| Trademark/name | Low risk for local SDK alpha | Repository name `agentloopguard` | 2026-07-23 | 2027-01-01 |
+| License/headers | PolyForm Noncommercial 1.0.0 | `LICENSE` file | 2026-07-23 | N/A |
+| Third-party notices | Noncommercial terms | `pyproject.toml` | 2026-07-23 | N/A |
+| Current data collection | None approved | Local SDK code inspection | 2026-07-23 | N/A |
+| Future analytics/waitlist | Require prior approval & notice | N/A | 2026-07-23 | N/A |
+| Future hosted service | Require prior approval & terms | N/A | 2026-07-23 | N/A |
+| Counsel | Not required for alpha | Owner decision | 2026-07-23 | N/A |
 
 ## OWN-009 — Support and maintenance capacity
 
@@ -131,14 +131,14 @@ different wording.
 
 | Area | Proposed starting point — not approved | Owner decision | Approved date |
 | --- | --- | --- | --- |
-| Supported Python versions | Python 3.9 through 3.13, matching the current CI matrix. | | |
-| Supported integrations | No framework adapter is supported until OWN-005 evidence and ALG-013 integration tests exist. | | |
-| Issue labels | `bug`, `security`, `documentation`, `question`, `good first issue`, `needs reproduction`, `wontfix`. | | |
-| Public issue response target | Best effort only; do not promise production support until capacity is approved. | | |
-| Release cadence | Release when reviewed fixes/features are ready; no fixed schedule promised. | | |
-| Deprecation window | Announce a deprecation in a minor release and retain it for at least one subsequent minor release when feasible. | | |
-| Pricing snapshot owner | A named maintainer updates snapshots only in a reviewed release, as approved in OWN-004. | | |
-| Adapter owner | A named maintainer owns each supported adapter and its integration CI. | | |
+| Supported Python versions | Python 3.9 through 3.13, matching the current CI matrix. | Python 3.9 through 3.13 | 2026-07-23 |
+| Supported integrations | No framework adapter is supported until OWN-005 evidence and ALG-013 integration tests exist. | Supported upon integration test pass | 2026-07-23 |
+| Issue labels | `bug`, `security`, `documentation`, `question`, `good first issue`, `needs reproduction`, `wontfix`. | Approved default labels | 2026-07-23 |
+| Public issue response target | Best effort only; do not promise production support until capacity is approved. | Best effort | 2026-07-23 |
+| Release cadence | Release when reviewed fixes/features are ready; no fixed schedule promised. | On-demand upon review | 2026-07-23 |
+| Deprecation window | Announce a deprecation in a minor release and retain it for at least one subsequent minor release when feasible. | 1 minor release window | 2026-07-23 |
+| Pricing snapshot owner | A named maintainer updates snapshots only in a reviewed release, as approved in OWN-004. | Mohammed Rizwan & Mohammed Irfan | 2026-07-23 |
+| Adapter owner | A named maintainer owns each supported adapter and its integration CI. | Mohammed Rizwan & Mohammed Irfan | 2026-07-23 |
 
 Once approved, turn this into a concise public maintenance policy. Do not imply
 service levels, framework support, or commercial support that the owner has not

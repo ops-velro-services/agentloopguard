@@ -140,11 +140,10 @@ PRICING_TABLE = {
 
 
 def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
-    """Estimate cost in USD for a given model and token usage."""
-    model_lower = model.lower()
-    for key, rates in PRICING_TABLE.items():
-        if key in model_lower:
-            cost_in = (input_tokens / 1_000_000) * rates["input"]
-            cost_out = (output_tokens / 1_000_000) * rates["output"]
-            return cost_in + cost_out
-    return 0.0
+    """Estimate cost in USD for a given model and token usage.
+
+    Uses zero-cost fallback for unknown models for backwards compatibility.
+    """
+    from agentloopguard.pricing import resolve_cost
+
+    return resolve_cost(model, input_tokens, output_tokens, unknown_model_policy="zero").cost_usd

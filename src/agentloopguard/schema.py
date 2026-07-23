@@ -25,6 +25,9 @@ class StepEvent:
     tool_args: Any = None
     output: Any = None
     exception: Optional[Mapping[str, str]] = None
+    cost_source: Optional[str] = None
+    pricing_snapshot_version: Optional[str] = None
+    pricing_effective_date: Optional[str] = None
     extra: Mapping[str, Any] = field(default_factory=dict)
     schema_version: int = SCHEMA_VERSION
 
@@ -42,6 +45,12 @@ class StepEvent:
                 "cost_usd": self.cost_usd,
             }
         )
+        if self.cost_source is not None:
+            result["cost_source"] = self.cost_source
+        if self.pricing_snapshot_version is not None:
+            result["pricing_snapshot_version"] = self.pricing_snapshot_version
+        if self.pricing_effective_date is not None:
+            result["pricing_effective_date"] = self.pricing_effective_date
         if self.tool_name is not None:
             result["tool_name"] = self.tool_name
         if self.tool_args is not None:

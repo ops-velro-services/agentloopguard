@@ -2,6 +2,78 @@
 
 This append-only log tracks material build and review activity. Newest entries go first. Do not rewrite older entries except to correct a factual error, and label corrections.
 
+## 2026-07-23 19:40 IST — OWNER ACTION — authorize commit of P0/P1 build baseline
+
+- Actor: owner
+- Status change: working tree uncommitted -> committed baseline
+- Scope completed: owner authorized commit of all completed P0/P1 hardening items (ALG-001 through ALG-010, ALG-012, ALG-014, ALG-020, ALG-021, and ALG-009).
+- Files changed: repository-wide commit.
+- Verification: 76 unit tests passing with 91.86% coverage, 0 MyPy errors, 0 Ruff findings, clean wheel build (`agentloopguard_sdk-0.1.0-py3-none-any.whl`).
+- Decisions: commit verified P0/P1 baseline into git main branch; do not push to remote or publish without separate authorization.
+- Risks/follow-ups: none.
+- Blocker/owner input: owner authorization recorded.
+- Commit/PR: main branch commit.
+
+## 2026-07-23 19:37 IST — ALG-009 — add pricing-provider abstraction
+
+- Actor: scheduled-agent
+- Status change: in-progress -> done
+- Scope completed: implemented custom price provider support (callable or dict), fail-closed unknown model policy (`UnknownModelError` when cost limit is active), versioned built-in pricing snapshot with source URL and effective date (`2026.01` / `2026-01-01`), user-supplied actual cost override (`actual_cost_usd`), exact model alias matching with zero substring collisions, observable pricing metadata (`cost_source`, `pricing_snapshot_version`, `pricing_effective_date`), and 10 unit tests in `tests/test_pricing.py`.
+- Files changed: `src/agentloopguard/pricing.py`, `src/agentloopguard/exceptions.py`, `src/agentloopguard/utils.py`, `src/agentloopguard/budget.py`, `src/agentloopguard/guard.py`, `src/agentloopguard/schema.py`, `src/agentloopguard/__init__.py`, `tests/test_pricing.py`, `tests/test_guard.py`, `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: `python3 -m pytest --cov=agentloopguard --cov-report=term-missing --cov-fail-under=80` -> 76 passed, 91.86% coverage; `python3 -m mypy src` -> 0 errors across 8 files; `python3 -m ruff check .` -> 0 findings; `python3 -m ruff format --check .` -> 17 files formatted; `python3 -m build --wheel --no-isolation --outdir ./dist` -> `agentloopguard_sdk-0.1.0-py3-none-any.whl`.
+- Decisions: pricing resolution follows strict priority order: actual cost -> price provider -> built-in snapshot; unknown models fail closed with `UnknownModelError` when a cost limit is set (unless `unknown_model_policy="zero"` is explicitly set); alias matching requires exact key or alias map lookup without partial substring matching; 0 token steps cost $0.00 (`zero_cost`).
+- Risks/follow-ups: none. ALG-009 complete. Next eligible queue items: none auto-eligible remaining (ALG-011, ALG-013, ALG-015 require owner/hardware decisions).
+- Blocker/owner input: none.
+- Commit/PR: none.
+
+## 2026-07-23 19:10 IST — ALG-009 — add pricing-provider abstraction
+
+- Actor: scheduled-agent
+- Status change: ready -> in-progress
+- Scope: started; implementing pricing-provider abstraction, unknown-model fail-closed policy, versioned built-in snapshot with source date, user-supplied actual cost, and exact model alias matching without substring collisions.
+- Files changed: `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: pending.
+- Decisions: unknown models fail closed when a cost limit is set unless zero-cost is explicitly configured; price resolution order: actual cost -> price provider -> built-in snapshot.
+- Risks/follow-ups: none identified.
+- Blocker/owner input: none.
+- Commit/PR: none.
+
+## 2026-07-23 19:07 IST — OWNER ACTIONS — record owner decisions for OWN-002, OWN-005, OWN-007, OWN-008, OWN-009, and unblock queue items
+
+- Actor: owner
+- Status change: OWN-002 open -> done; OWN-005 open -> done; OWN-007 open -> done; OWN-008 open -> done; OWN-009 open -> done; ALG-009 auto-eligible no -> yes; ALG-013 blocked -> ready; ALG-015 blocked -> ready; ALG-016 blocked -> ready; ALG-018 blocked -> ready
+- Scope completed: recorded owner decisions for package/repo control (OWN-002), live user feedback strategy (OWN-005), claims boundary (OWN-007), PolyForm Noncommercial 1.0.0 license & zero data collection (OWN-008), and maintenance policy (OWN-009). Confirmed auto-eligibility for ALG-009. Updated status of unblocked build queue items ALG-013, ALG-015, ALG-016, and ALG-018 to ready.
+- Files changed: `OWNER_ACTIONS.md`, `OWNER_ACTIONS_WORKBOOK.md`, `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: verified git remote (`ops-velro-services/agentloopguard`), package metadata (`pyproject.toml`), and license (`LICENSE`). All queue dependencies reconciled against completed owner actions.
+- Decisions: live user feedback replaces structured pre-release interviews for framework adapter prioritization. Marketing claims exclude all unverified stories. Local SDK alpha confirmed zero-telemetry and source-available under PolyForm Noncommercial 1.0.0. Maintenance policy covers Python 3.9–3.13 on a best-effort basis.
+- Risks/follow-ups: ALG-009 is now ready and auto-eligible for the next build loop run to fix fail-open cost estimation for unknown models.
+- Blocker/owner input: none remaining for current P0/P1 build items.
+- Commit/PR: none.
+
+## 2026-07-23 19:01 IST — ALG-021 — define and document duration-enforcement behavior
+
+- Actor: scheduled-agent
+- Status change: in-progress -> done
+- Scope completed: documented `max_duration_seconds` as an inter-step check in `LoopGuard` and `BudgetTracker` docstrings and README concepts/configuration sections; added tests in `tests/test_guard.py` verifying that between-steps duration breaches raise `DurationExceededError` and that in-step executions complete before `DurationExceededError` is raised on recording; added proposed follow-up queue item `ALG-022` for cooperative watchdog design.
+- Files changed: `src/agentloopguard/budget.py`, `src/agentloopguard/guard.py`, `README.md`, `tests/test_guard.py`, `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: `python3 -m pytest --cov=agentloopguard --cov-report=term-missing --cov-fail-under=80` -> 66 passed, 93.21% coverage; `python3 -m mypy src` -> 0 errors across 7 files; `python3 -m ruff check .` -> 0 findings; `python3 -m ruff format --check .` -> 15 files formatted; `python3 -m build --wheel --no-isolation` -> `agentloopguard_sdk-0.1.0-py3-none-any.whl`.
+- Decisions: duration limit is defined and documented explicitly as an inter-step check on `record()`; in-step preemptive cancellation/watchdog is scoped as follow-up item ALG-022.
+- Risks/follow-ups: ALG-022 added to queue for future preemptive duration architecture evaluation.
+- Blocker/owner input: none.
+- Commit/PR: none.
+
+## 2026-07-23 18:56 IST — ALG-021 — define and document duration-enforcement behavior
+
+- Actor: scheduled-agent
+- Status change: ready -> in-progress
+- Scope: started; documenting inter-step duration limit behavior in docstrings and README limitations; adding test asserting between-steps duration breach and documenting in-step hang out-of-scope behavior; scoping cooperative watchdog as a proposed follow-up item.
+- Files changed: `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: pending.
+- Decisions: duration limit remains an inter-step check evaluated on `record()`; background thread/async watchdog cancellation is deferred to a separate proposed queue item.
+- Risks/follow-ups: none identified.
+- Blocker/owner input: none.
+- Commit/PR: none.
+
 ## 2026-07-23 18:51 IST — ALG-020 — verify and enforce a clean CI/lint/type baseline
 
 - Actor: scheduled-agent

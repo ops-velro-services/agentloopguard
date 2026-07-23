@@ -31,8 +31,26 @@ from agentloopguard.exceptions import (
 from agentloopguard.exceptions import (
     LoopDetectedError as LoopDetectedError,
 )
+from agentloopguard.exceptions import (
+    UnknownModelError as UnknownModelError,
+)
 from agentloopguard.guard import GuardSession as GuardSession
 from agentloopguard.guard import LoopGuard as LoopGuard
+from agentloopguard.pricing import (
+    DEFAULT_PRICING_SNAPSHOT as DEFAULT_PRICING_SNAPSHOT,
+)
+from agentloopguard.pricing import (
+    ModelRates as ModelRates,
+)
+from agentloopguard.pricing import (
+    PricingEstimate as PricingEstimate,
+)
+from agentloopguard.pricing import (
+    PricingSnapshot as PricingSnapshot,
+)
+from agentloopguard.pricing import (
+    resolve_cost as resolve_cost,
+)
 from agentloopguard.schema import SCHEMA_VERSION as SCHEMA_VERSION
 from agentloopguard.schema import StepEvent as StepEvent
 from agentloopguard.schema import TelemetryEvent as TelemetryEvent

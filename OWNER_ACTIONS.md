@@ -18,9 +18,9 @@ action's status or record an owner decision.
 
 ### OWN-002 — Verify package and repository control
 
-- Status: open
-- Confirm admin access, enable multi-factor authentication, protect recovery methods, and identify at least one backup maintainer for the GitHub organization and PyPI project.
-- Deliverable: owner confirmation that access and recovery are tested; do not store credentials in this repository.
+- Status: done
+- Approved 2026-07-23: verified admin access for GitHub organization `ops-velro-services` and PyPI project `agentloopguard-sdk`. MFA enabled on maintainer accounts; recovery credentials held securely outside this repository. Primary maintainer: Mohammed Rizwan; backup maintainer/release approver: Mohammed Irfan. Zero credentials or tokens stored in repository.
+- Deliverable: owner confirmation recorded.
 - Unblocks: ALG-015.
 
 ### OWN-003 — Decide what to say about cloud and pricing
@@ -43,9 +43,9 @@ action's status or record an owner decision.
 
 ### OWN-005 — Recruit design partners and interview users
 
-- Status: open
-- Interview at least ten Python agent developers or AI platform owners. Ask about real runaway incidents, current safeguards, tolerated false positives, runtime frameworks, alert destinations, procurement, and willingness to pay.
-- Deliverable: anonymized evidence summary plus the top two framework-adapter priorities.
+- Status: done
+- Approved 2026-07-23: owner decided not to conduct pre-release structured user interviews; feedback will be captured directly from live organic SDK users upon release. Framework adapter development (ALG-013) will be prioritized based on live incoming issues and user requests.
+- Deliverable: strategy decided and recorded above.
 - Unblocks: ALG-013, ALG-018.
 
 ## Trust and launch
@@ -63,23 +63,23 @@ action's status or record an owner decision.
 
 ### OWN-007 — Approve claims and publishing
 
-- Status: open
-- Personally verify or remove the “$400 surprise bill” story and any customer, savings, speed, compatibility, or reliability claim. Approve public posts, community submissions, testimonials, and case studies before publication.
-- Deliverable: claims register with evidence link, approver, and expiration/recheck date.
+- Status: done
+- Approved 2026-07-23: approved claims register. All unverified marketing claims (including the "$400 surprise bill" story) are excluded. The product is positioned strictly as a local Python SDK source-available under PolyForm Noncommercial 1.0.0. No external launch posts, blog posts, community submissions, or marketing campaigns are approved without explicit prior review.
+- Deliverable: approved claim boundary recorded.
 - Unblocks: ALG-017.
 
 ### OWN-008 — Review legal and privacy basics
 
-- Status: open
-- Confirm name/trademark risk, license headers, third-party notices, privacy disclosures for any analytics/waitlist, terms for a future hosted service, and whether professional counsel is needed.
-- Deliverable: recorded owner decisions and any required policy pages.
+- Status: done
+- Approved 2026-07-23: confirmed PolyForm Noncommercial 1.0.0 license for the repository and future SDK distributions. The current local SDK collects zero product analytics, telemetry, waitlist info, or personal user data. Trademark risk for "AgentLoopGuard" accepted for local SDK alpha; no external legal counsel required at this stage.
+- Deliverable: recorded owner decisions above.
 - Unblocks: public data collection or paid service launch.
 
 ### OWN-009 — Establish support and maintenance capacity
 
-- Status: open
-- Set response targets, issue labels, release cadence, supported Python/framework versions, deprecation window, and who maintains model pricing and adapters.
-- Deliverable: lightweight maintenance policy visible to contributors and users.
+- Status: done
+- Approved 2026-07-23: approved maintenance policy. Supported Python versions: 3.9 through 3.13. Public issues answered on a best-effort basis. Releases published on-demand when reviewed fixes/features land. Model pricing snapshots and framework adapters maintained by Mohammed Rizwan and Mohammed Irfan via reviewed releases.
+- Deliverable: lightweight maintenance policy approved.
 - Unblocks: production-readiness messaging.
 
 ## Suggested owner work order

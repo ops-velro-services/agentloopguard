@@ -2,14 +2,22 @@
 
 import math
 import time
+from collections.abc import Mapping
 from typing import Any, Callable, Optional
 
 from agentloopguard.exceptions import BudgetExceededError, DurationExceededError
-from agentloopguard.utils import estimate_cost
+from agentloopguard.pricing import PriceProviderType, resolve_cost
 
 
 class BudgetTracker:
-    """Tracks token usage, cost, time, and iterations against limits."""
+    """Tracks token usage, cost, time, and iterations against limits.
+
+    Note:
+        Duration enforcement (`max_duration_seconds`) is evaluated inter-step
+        whenever `record()` or `check()` is invoked. In-step hangs during external
+        tool or model execution are not interrupted mid-call; a `DurationExceededError`
+        is raised on the next step recorded after the duration limit is reached.
+    """
 
     def __init__(
         self,
@@ -17,6 +25,8 @@ class BudgetTracker:
         max_tokens: Optional[int] = None,
         max_iterations: Optional[int] = None,
         max_duration_seconds: Optional[int] = None,
+        price_provider: Optional[PriceProviderType] = None,
+        unknown_model_policy: Optional[str] = None,
         warning_callback: Optional[Callable[[str, float], None]] = None,
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
@@ -24,6 +34,19 @@ class BudgetTracker:
         _validate_positive_integer("max_tokens", max_tokens)
         _validate_positive_integer("max_iterations", max_iterations)
         _validate_positive_number("max_duration_seconds", max_duration_seconds)
+        if (
+            price_provider is not None
+            and not callable(price_provider)
+            and not isinstance(price_provider, Mapping)
+        ):
+            raise TypeError("price_provider must be callable or a mapping when provided")
+        if unknown_model_policy is not None and unknown_model_policy not in {
+            "fail_closed",
+            "zero",
+            "raise",
+            "allow",
+        }:
+            raise ValueError("unknown_model_policy must be 'fail_closed' or 'zero'")
         if warning_callback is not None and not callable(warning_callback):
             raise TypeError("warning_callback must be callable when provided")
         if not callable(clock):
@@ -32,6 +55,12 @@ class BudgetTracker:
         self.max_tokens = max_tokens
         self.max_iterations = max_iterations
         self.max_duration_seconds = max_duration_seconds
+        self.price_provider = price_provider
+        self.unknown_model_policy = (
+            unknown_model_policy
+            if unknown_model_policy is not None
+            else ("fail_closed" if max_cost_usd is not None else "zero")
+        )
         self.warning_callback = warning_callback
         self._clock = clock
 
@@ -66,13 +95,27 @@ class BudgetTracker:
             raise ValueError("clock must return a finite number")
         return float(value)
 
-    def record(self, model: str, input_tokens: int, output_tokens: int) -> None:
+    def record(
+        self,
+        model: str,
+        input_tokens: int,
+        output_tokens: int,
+        actual_cost_usd: Optional[float] = None,
+    ) -> None:
         """Record usage for a step."""
         validate_usage_inputs(model, input_tokens, output_tokens)
+        estimate = resolve_cost(
+            model,
+            input_tokens,
+            output_tokens,
+            actual_cost_usd=actual_cost_usd,
+            price_provider=self.price_provider,
+            unknown_model_policy=self.unknown_model_policy,
+        )
         self.iterations += 1
         self.total_input_tokens += input_tokens
         self.total_output_tokens += output_tokens
-        self.total_cost_usd += estimate_cost(model, input_tokens, output_tokens)
+        self.total_cost_usd += estimate.cost_usd
 
         self.check()
 

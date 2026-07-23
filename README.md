@@ -89,7 +89,7 @@ All four run automatically on every `session.record()` call. Zero configuration 
   a stable `detector_id`, measured values, a recommended action, and the
   triggering session and timestamp.
 - A **budget** is checked after every accepted step. The supported local limits
-  are iterations, tokens, elapsed monotonic duration, and the SDK's built-in
+  are iterations, tokens, elapsed monotonic duration (checked inter-step), and the SDK's built-in
   cost estimate.
 
 ### Stable event schema
@@ -224,7 +224,7 @@ print(tracker.summary())
 | `max_iterations` | `int` | `None` | Maximum number of agent steps |
 | `max_cost_usd` | `float` | `None` | Maximum total cost in USD |
 | `max_tokens` | `int` | `None` | Maximum total tokens (input + output) |
-| `max_duration_seconds` | `float` | `None` | Maximum elapsed time, measured with a monotonic clock |
+| `max_duration_seconds` | `float` | `None` | Maximum elapsed time in seconds, measured with a monotonic clock (checked inter-step upon `record()`) |
 | `on_alert` | `str` | `"raise"` | Action on detection: `"raise"`, `"log"`, `"callback"` (the latter requires a callback) |
 | `alert_callback` | `callable` | `None` | Callable custom function called on detection |
 | `event_exporter` | `callable` | `None` | Callable receiving dependency-free `TelemetryEvent` step/detection events |
@@ -237,6 +237,12 @@ The built-in cost-velocity detector uses a bounded 1,000-event window; pass
 steps. Duration limits use `time.monotonic()` by default. Tests or specialized
 runtimes can provide a finite-number-returning `clock` callable to
 `LoopGuard` or `BudgetTracker`.
+
+Duration limits (`max_duration_seconds`) are evaluated inter-step upon `record()`.
+If a tool call or model invocation hangs mid-step before returning, `LoopGuard` cannot
+interrupt execution mid-call; `DurationExceededError` is raised on the subsequent
+step recorded after the duration limit expires. Preemptive background watchdog
+cancellation is out of scope for standard inter-step budget enforcement.
 
 Configuration is validated when the guard is created. Limits must be positive,
 token counts must be non-negative integers, timestamps must be finite numbers,

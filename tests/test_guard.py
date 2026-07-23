@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from agentloopguard.detectors import BaseDetector, ExactRepeatDetector
-from agentloopguard.exceptions import LoopDetectedError
+from agentloopguard.exceptions import DurationExceededError, LoopDetectedError
 from agentloopguard.guard import LoopGuard
 from agentloopguard.schema import SCHEMA_VERSION, StepEvent, TelemetryEvent
 
@@ -297,6 +297,9 @@ def test_recorded_steps_have_a_versioned_schema_and_accept_typed_input():
         "input_tokens": 1,
         "output_tokens": 2,
         "cost_usd": 0,
+        "cost_source": "zero_cost",
+        "pricing_snapshot_version": "2026.01",
+        "pricing_effective_date": "2026-01-01",
         "tool_name": "search",
         "tool_args": {"query": "guard"},
         "request_id": "req-1",
@@ -367,6 +370,7 @@ def test_event_exporter_emits_otel_compatible_step_and_detection_events():
         "agentloopguard.input_tokens": 2,
         "agentloopguard.output_tokens": 3,
         "agentloopguard.cost_usd": pytest.approx(0.000055),
+        "agentloopguard.cost_source": "builtin_snapshot",
         "agentloopguard.tool.name": "search",
     }
     assert exported[-1].attributes == {
@@ -392,3 +396,36 @@ def test_event_exporter_failure_does_not_break_guard_recording():
 def test_guard_rejects_invalid_event_exporter():
     with pytest.raises(TypeError, match="event_exporter"):
         LoopGuard(event_exporter="not callable")
+
+
+def test_duration_check_is_evaluated_inter_step_on_record():
+    clock_time = [100.0]
+    guard = LoopGuard(max_duration_seconds=5, detectors=[], clock=lambda: clock_time[0])
+    session = guard.session()
+
+    clock_time[0] = 103.0
+    session.record({"tool_name": "step1", "tool_args": {}})
+
+    clock_time[0] = 106.5
+    with pytest.raises(DurationExceededError, match="Max duration exceeded: 6.5s > 5s"):
+        session.record({"tool_name": "step2", "tool_args": {}})
+
+
+def test_instep_hang_runs_to_completion_before_interstep_duration_check_raises():
+    clock_time = [100.0]
+    guard = LoopGuard(max_duration_seconds=2, detectors=[], clock=lambda: clock_time[0])
+    execution_completed = False
+
+    @guard.watch()
+    def long_running_tool():
+        nonlocal execution_completed
+        # Simulate in-step execution duration (e.g. hung network or heavy work)
+        clock_time[0] = 105.0
+        execution_completed = True
+        return "done"
+
+    # In-step execution completes inside long_running_tool before record checks budget
+    with pytest.raises(DurationExceededError):
+        long_running_tool()
+
+    assert execution_completed is True
