@@ -2,6 +2,30 @@
 
 This append-only log tracks material build and review activity. Newest entries go first. Do not rewrite older entries except to correct a factual error, and label corrections.
 
+## 2026-07-23 18:51 IST — ALG-020 — verify and enforce a clean CI/lint/type baseline
+
+- Actor: scheduled-agent
+- Status change: in-progress -> done
+- Scope completed: ran full quality verification suite: pytest with coverage threshold, mypy src, ruff check ., hatchling wheel build, and clean virtual environment wheel install + import smoke test. Verified zero MyPy errors, zero Ruff findings, 64 passing tests with 93.21% coverage (>=80%), and clean wheel import producing version 0.1.0.
+- Files changed: `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: `python3 -m pytest --cov=agentloopguard --cov-report=term-missing --cov-fail-under=80` -> 64 passed, 93.21% coverage; `python3 -m mypy src` -> 0 errors across 7 files; `python3 -m ruff check .` -> 0 findings; `python3 -m build --wheel --no-isolation --outdir ./dist` -> `agentloopguard_sdk-0.1.0-py3-none-any.whl`; clean virtualenv wheel install and import -> passed (`0.1.0`).
+- Decisions: verified clean baseline state; no code modifications to `src/` or `tests/` were required as all checks passed cleanly.
+- Risks/follow-ups: none.
+- Blocker/owner input: none.
+- Commit/PR: none (uncommitted changes left in working tree per policy).
+
+## 2026-07-23 18:48 IST — ALG-020 — verify and enforce a clean CI/lint/type baseline
+
+- Actor: scheduled-agent
+- Status change: ready -> in-progress
+- Scope: started; running pytest with coverage threshold, mypy src, ruff check ., and clean wheel install/import smoke test; fixing any remaining failures; capturing results.
+- Files changed: `BUILD_QUEUE.md`, `BUILD_LOG.md`.
+- Verification: pending.
+- Decisions: none yet.
+- Risks/follow-ups: none.
+- Blocker/owner input: none.
+- Commit/PR: none.
+
 ## 2026-07-21 20:25 IST — OWN-006 — complete security and release ownership
 
 - Actor: owner

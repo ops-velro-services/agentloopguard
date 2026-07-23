@@ -71,7 +71,7 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-020 — Verify and enforce a clean CI/lint/type baseline
 
-- Status: ready
+- Status: done
 - Auto-eligible: yes
 - Depends on: ALG-006
 - Added 2026-07-23 (status review): ALG-006 wired up the CI gates, but the green state was not re-verified after the P0/P1 changes. The original audit reported 8 MyPy errors and 153 Ruff findings; these must be confirmed cleared so the "release-quality CI" claim is truthful.
