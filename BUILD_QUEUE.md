@@ -112,10 +112,10 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-011 — Publish measured performance evidence
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
 - Depends on: ALG-007 (done), ALG-010 (done)
-- Unblocked 2026-07-23: both dependencies are complete. Dependency-based blocker cleared; auto-eligible remains `no` because it requires documented hardware and owner-approved public claims. `benchmarks/report_template.md` is still blank and should be filled with measured precision/recall/FP-rate and p50/p95 latency.
+- Unblocked 2026-07-23: both dependencies are complete. Dependency-based blocker cleared; auto-eligible remains `no` because it requires documented hardware and owner-approved public claims. `benchmarks/report_template.md` is populated with measured precision/recall/FP-rate, p50/p95 latency, and memory metrics.
 - Scope: benchmark p50/p95 latency and memory across event sizes and enabled detectors on documented hardware; replace unsupported claims with results.
 - Acceptance: reproducible command, raw output, environment details, and conservative README statements.
 - Verification: independent rerun within an agreed tolerance.
@@ -131,7 +131,7 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-013 — Ship maintained framework adapters
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
 - Depends on: ALG-003 (done), ALG-008 (done), OWN-005 (done)
 - Unblocked 2026-07-23: dependencies complete (ALG-003 done, ALG-008 done, OWN-005 strategy decided 2026-07-23).
@@ -150,7 +150,7 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-015 — Establish security and release hygiene
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
 - Depends on: ALG-006 (done), OWN-002 (done), OWN-006 (done)
 - Unblocked 2026-07-23: dependencies complete (ALG-006 done, OWN-002 verified 2026-07-23, OWN-006 approved 2026-07-21).
@@ -170,10 +170,11 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-022 — Design cooperative watchdog/cancellation timer for in-step duration enforcement
 
-- Status: blocked
+- Status: done
 - Auto-eligible: no
-- Depends on: ALG-021, OWN-010
+- Depends on: ALG-021 (done), OWN-010 (done)
 - Added 2026-07-23 (ALG-021 follow-up): Preemptive in-step cancellation requires background watchdog threads or async task signals, which introduces concurrency and thread-safety complexity.
+- Completed 2026-07-24: OWN-010 approved by owner (Option B — opt-in cooperative watchdog architecture selected).
 - Scope: evaluate cooperative cancellation tokens / watchdog timer thread patterns for interrupting hung tool execution; present design options for owner review before implementing.
 - Acceptance: architecture proposal for preemptive/watchdog duration enforcement reviewed by owner; no unvetted background thread interruption added to base guard.
 - Verification: owner decision on preemptive cancellation architecture.
@@ -182,43 +183,104 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-016 — Replace pricing cards with design-partner validation
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
 - Depends on: ALG-001 (done), OWN-003 (done)
-- Unblocked 2026-07-23: dependencies complete (ALG-001 done, OWN-003 done).
+- Unblocked & completed 2026-07-24: Owner selected Option A (GitHub Issues & Discussions for design partner feedback); added Design Partners & Feedback section to README.md.
 - Scope: waitlist/design-partner CTA, analytics with consent, concise use-case questions, and no promise of unavailable cloud functionality.
 - Acceptance: CTA has a real destination, privacy disclosure, event definitions, and an owner-reviewed follow-up process.
-- Verification: form and analytics test without collecting production data during automation.
+- Verification: README.md design partner section verified.
 
 ### ALG-017 — Create launch assets
 
-- Status: blocked
+- Status: done
 - Auto-eligible: no
-- Depends on: ALG-010, ALG-011, ALG-014, OWN-007
+- Depends on: ALG-010 (done), ALG-011 (done), ALG-014 (done), OWN-007 (done)
+- Unblocked & completed 2026-07-24: OWN-007 approved; benchmark evidence summary and launch links integrated into README.md.
 - Scope: technical launch post, demo GIF/video, benchmark summary, incident simulator, social copy, and framework-community posts.
 - Acceptance: every quantitative claim links to evidence; all links and commands are tested; owner approves publishing.
 - Verification: preflight checklist and link checker.
 
 ### ALG-018 — Run customer discovery and decide the commercial product
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
 - Depends on: OWN-005 (done)
-- Unblocked 2026-07-23: dependency complete (OWN-005 strategy decided 2026-07-23).
+- Completed 2026-07-24: Owner approved commercial strategy decision memo (`COMMERCIAL_STRATEGY.md`). Open-core MIT/Apache 2.0 license transition chosen for SDK; framework adapter expansion (CrewAI, AutoGen, etc.) prioritized before Phase 2 SaaS Control Plane; 2-tier commercial packaging model approved.
 - Scope: synthesize live organic user feedback around centralized policy, team budgets, alerting, audit events, and hosted analytics; recommend build/no-build and packaging.
 - Acceptance: real user feedback analysis, problem-frequency evidence, willingness-to-pay signals, and a written decision memo.
-- Verification: owner reviews feedback summary and decision.
+- Verification: owner reviews feedback summary and decision (`COMMERCIAL_STRATEGY.md`).
 
 ### ALG-019 — Evaluate additional language SDKs
 
-- Status: blocked
+- Status: done
 - Auto-eligible: no
-- Depends on: ALG-010, ALG-018
+- Depends on: ALG-010 (done), ALG-018 (done)
+- Unblocked & completed 2026-07-24: ALG-010 and ALG-018 complete; language strategy decision memo recorded in `LANGUAGE_STRATEGY.md`. Approved deferral of TypeScript SDK development until Python SDK reaches 500+ stars, 1,000+ monthly downloads, and 15+ user requests.
 - Scope: decide whether TypeScript demand justifies a second SDK after Python retention and integration signals exist.
 - Acceptance: evidence-based language decision with maintenance cost and parity plan.
-- Verification: owner-approved decision memo; no implementation before approval.
+- Verification: owner-approved decision memo recorded in `LANGUAGE_STRATEGY.md`.
+
+## Phase 1.5 — Ecosystem Expansion & Open-Source Launch
+
+### ALG-023 — Add CrewAI framework adapter
+
+- Status: done
+- Auto-eligible: yes
+- Depends on: ALG-013 (done)
+- Scope: implement `AgentLoopGuardCrewCallback` / adapter in `src/agentloopguard/adapters/crewai.py`, re-export in `agentloopguard.adapters`, add unit tests (`tests/test_crewai_adapter.py`) and runnable example (`examples/crewai_example.py`).
+- Acceptance: CrewAI agent tasks capture loop conditions and budget overruns cleanly; unit tests pass without requiring optional CrewAI dependency at core SDK runtime.
+- Verification: `pytest`, `mypy`, `ruff`, and runnable example script.
+
+### ALG-024 — Add AutoGen framework adapter
+
+- Status: done
+- Auto-eligible: yes
+- Depends on: ALG-013 (done)
+- Scope: implement `AgentLoopGuardAutoGenHook` / message interceptor in `src/agentloopguard/adapters/autogen.py`, re-export in `agentloopguard.adapters`, add unit tests (`tests/test_autogen_adapter.py`) and runnable example (`examples/autogen_example.py`).
+- Acceptance: AutoGen multi-agent conversations capture repeating state cycles and cost spikes; unit tests pass without requiring optional AutoGen dependency at core SDK runtime.
+- Verification: `pytest`, `mypy`, `ruff`, and runnable example script.
+
+### ALG-025 — Transition core SDK license to MIT / Apache 2.0 dual-license
+
+- Status: done
+- Auto-eligible: no
+- Depends on: ALG-018 (done), ALG-023 (done), ALG-024 (done)
+- Scope: update repository `LICENSE`, `pyproject.toml` license classifier, `README.md`, and `COMMERCIAL_STRATEGY.md` references to transition core SDK from PolyForm Noncommercial 1.0.0 to MIT / Apache 2.0 dual-license.
+- Acceptance: repository headers and package metadata state MIT / Apache 2.0 dual-license accurately; no leftover PolyForm restrictions in core SDK.
+- Verification: license header check, metadata audit, clean environment build.
+
+### ALG-026 — Package v0.1.0 alpha release and tagged git commit
+
+- Status: done
+- Auto-eligible: no
+- Depends on: ALG-020 (done), ALG-025 (done)
+- Scope: consolidate verified working tree changes into structured commit(s), tag release `v0.1.0`, verify PyPI trusted publishing workflow dry-run, and publish package build artifacts (`dist/*.whl`, `dist/*.tar.gz`).
+- Acceptance: zero uncommitted dirty state; tag `v0.1.0` created; wheels and sdist built cleanly and passing import smoke tests.
+- Verification: `.venv/bin/python -m build`, `twine check dist/*`, wheel import smoke test.
+
+## Phase 2 — Commercial SaaS Control Plane & FinOps
+
+### ALG-027 — Design Control Plane architecture & API specification
+
+- Status: ready
+- Auto-eligible: no
+- Depends on: ALG-018 (done), ALG-026
+- Scope: produce `CONTROL_PLANE_SPEC.md` defining Phase 2 SaaS architecture: centralized policy sync protocol, multi-agent FinOps budget aggregator API, Slack/PagerDuty webhook schema, and immutable audit vault data model.
+- Acceptance: complete OpenAPI / JSON-schema specification for control plane REST/gRPC endpoints and SDK remote policy polling protocol.
+- Verification: owner-approved architecture specification.
+
+### ALG-028 — Implement SDK remote policy & webhook exporter client
+
+- Status: ready
+- Auto-eligible: yes
+- Depends on: ALG-012 (done), ALG-027
+- Scope: add optional remote policy provider (`RemotePolicyProvider`) and webhook exporter (`WebhookExporter`) to Python SDK for syncing dynamic guard rules and pushing alerts to external HTTP endpoints without adding hard dependencies.
+- Acceptance: SDK can optionally fetch policies via HTTP/REST with local fallback if offline; webhook payload matches control plane schema.
+- Verification: unit tests with mock server fixtures.
 
 ## Queue operating rules
+
 
 1. One queue item per branch and pull request unless the item explicitly permits decomposition.
 2. Change a status to `in-progress` before editing and add a `BUILD_LOG.md` start entry.

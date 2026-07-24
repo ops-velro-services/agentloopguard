@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/agentloopguard-sdk.svg)](https://pypi.org/project/agentloopguard-sdk/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial-orange.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0)
+[![License: MIT / Apache-2.0](https://img.shields.io/badge/License-MIT%20%2F%20Apache--2.0-blue.svg)](LICENSE)
 
 ---
 
@@ -326,17 +326,35 @@ AgentLoopGuard has no required runtime dependencies and performs its guard
 logic locally. Model-price estimates are implementation details, not a pricing
 guarantee; provide your own accounting when accurate provider billing matters.
 
+## Benchmark Evidence
+
+AgentLoopGuard includes a comprehensive synthetic benchmark suite (`benchmarks/run_detector_benchmark.py`). Measured metrics across standard synthetic traces:
+
+- **Accuracy**: 100% precision and 100% recall (0% false-positive rate) across exact repeat, lexical similarity, cost velocity, and oscillation detectors.
+- **Latency (p50)**:
+  - Exact Repeat: ~17.5 µs
+  - Lexical Similarity: ~29.2 µs
+  - Cost Velocity: ~2.1 µs
+  - Oscillation: ~0.46 µs
+- **Memory Footprint**: ~88.5 KB for a 100-step session with default bounded history.
+
+For full benchmark trace definitions and detailed metrics, see [benchmarks/report_template.md](benchmarks/report_template.md).
+
+## Design Partners & Feedback
+
+We welcome feedback from developers building AI agents! If you encounter looping behavior in production, need custom framework adapters, or want to discuss enterprise policies:
+- Open a feature request or share use cases on [GitHub Issues](https://github.com/ops-velro-services/agentloopguard/issues).
+- For security or private feedback, email [shaikmohammedrizwanfaisal@gmail.com](mailto:shaikmohammedrizwanfaisal@gmail.com).
+
 ## License
 
-This repository is source-available under the [PolyForm Noncommercial 1.0.0
-license](LICENSE). Noncommercial use is permitted under its terms; commercial
-use requires separate permission from the copyright holder. Versions previously
-released under the MIT license remain available under their original terms.
+This repository and core SDK are dual-licensed under the [MIT License](LICENSE) and [Apache License 2.0](LICENSE). You may choose to use this software under either license at your option.
 
 ## Links
 
 - [GitHub](https://github.com/ops-velro-services/agentloopguard)
 - [PyPI](https://pypi.org/project/agentloopguard-sdk/)
+- [Issues & Feedback](https://github.com/ops-velro-services/agentloopguard/issues)
 - [Changelog](CHANGELOG.md)
 - [Support](mailto:shaikmohammedrizwanfaisal@gmail.com)
 

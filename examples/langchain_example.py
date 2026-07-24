@@ -1,44 +1,27 @@
-"""
-Example of using AgentLoopGuard with LangChain.
-"""
+"""Example of using AgentLoopGuard with LangChain."""
 
-from importlib.util import find_spec
+from __future__ import annotations
 
-from agentloopguard import LoopGuard
+from agentloopguard import AgentLoopGuardError, LoopGuard
+from agentloopguard.adapters.langchain import AgentLoopGuardCallbackHandler
 
 
 def main() -> None:
-    if find_spec("langchain") is None:
-        print("Please install langchain to run this example")
-        return
+    # Initialize a LoopGuard with an iteration limit and alert policy
+    guard = LoopGuard(max_iterations=10, on_alert="raise")
 
-    guard = LoopGuard(max_iterations=5, on_alert="raise")
+    # Use the official AgentLoopGuardCallbackHandler
+    cb = AgentLoopGuardCallbackHandler(guard, default_model="gpt-4o")
 
-    # You would typically inject this via a LangChain CallbackHandler
-    class GuardCallback:
-        def __init__(self, session):
-            self.session = session
-
-        def on_tool_end(self, output, **kwargs):
-            self.session.record(
-                {
-                    "tool_name": kwargs.get("name", "unknown"),
-                    "tool_args": kwargs.get("inputs", {}),
-                    "output": str(output),
-                    "model": "gpt-3.5-turbo",  # Defaulting for example
-                }
-            )
-
-    with guard.session() as sess:
-        cb = GuardCallback(sess)
-
-        try:
-            # Simulate tool calls that trigger an oscillation loop
-            for _ in range(6):
-                cb.on_tool_end("output A", name="tool_A")
-                cb.on_tool_end("output B", name="tool_B")
-        except Exception as e:
-            print(f"Guard stopped execution: {e}")
+    try:
+        # Simulate LangChain tool callbacks that enter an oscillation loop
+        for _ in range(6):
+            cb.on_tool_end("output A", name="tool_A", inputs={"query": "fetch"})
+            cb.on_tool_end("output B", name="tool_B", inputs={"query": "process"})
+    except AgentLoopGuardError as e:
+        print(f"AgentLoopGuard stopped LangChain execution: {e}")
+    finally:
+        cb.close()
 
 
 if __name__ == "__main__":

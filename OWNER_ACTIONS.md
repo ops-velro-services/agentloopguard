@@ -82,6 +82,13 @@ action's status or record an owner decision.
 - Deliverable: lightweight maintenance policy approved.
 - Unblocks: production-readiness messaging.
 
+### OWN-010 — Approve duration-enforcement watchdog architecture
+
+- Status: done
+- Approved 2026-07-24: owner approved Option B (opt-in cooperative watchdog timer / cancellation thread pattern for preemptive in-step duration enforcement). In-step cancellation will be designed as an opt-in watchdog without altering the default zero-side-effect inter-step duration check.
+- Deliverable: recorded architecture approval.
+- Unblocks: ALG-022.
+
 ## Suggested owner work order
 
 1. OWN-001 and OWN-003 today; they directly affect truthful documentation.
