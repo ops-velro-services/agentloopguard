@@ -18,6 +18,58 @@ This log records every build loop execution, status change, verification run, an
 - Commit/PR: none or link/hash
 ```
 
+## 2026-07-24 — ALG-028 — Implement SDK Remote Policy & Webhook Exporter Client
+
+- Actor: automated-scheduler
+- Status change: ready -> done
+- Scope completed:
+  1. Implemented `RemotePolicyProvider` in `src/agentloopguard/client/policy.py` for fetching remote policy configurations via HTTP REST API (`/v1/policies/{policy_id}`) with ETag validation, in-memory caching, atomic local disk file fallback, and `create_guard()` factory instantiation.
+  2. Implemented `WebhookExporter` in `src/agentloopguard/client/webhooks.py` supporting HMAC-SHA256 request signing (`X-AgentLoopGuard-Signature`), asynchronous background thread dispatching, and structured detection (`agentloopguard.detection.v1`) and telemetry payload delivery.
+  3. Re-exported `RemotePolicyProvider` and `WebhookExporter` in `src/agentloopguard/client/__init__.py` and top-level `src/agentloopguard/__init__.py`.
+  4. Added comprehensive unit tests (`tests/test_client.py`) covering REST policy fetching, 304 Not Modified, offline disk cache fallback, HMAC signature calculation, and integration with `LoopGuard`.
+  5. Added runnable example script (`examples/client_example.py`).
+- Files changed:
+  - `src/agentloopguard/client/__init__.py` (NEW)
+  - `src/agentloopguard/client/policy.py` (NEW)
+  - `src/agentloopguard/client/webhooks.py` (NEW)
+  - `src/agentloopguard/__init__.py`
+  - `tests/test_client.py` (NEW)
+  - `examples/client_example.py` (NEW)
+  - `BUILD_QUEUE.md`
+  - `BUILD_LOG.md`
+- Verification:
+  - `.venv/bin/python -m pytest` -> 105 passed in 0.12s.
+  - `.venv/bin/python -m mypy src` -> Success: no issues found in 16 source files.
+  - `.venv/bin/python -m ruff check .` && `.venv/bin/python -m ruff format --check .` -> All checks passed; 33 files formatted.
+  - `PYTHONPATH=src .venv/bin/python examples/client_example.py` -> Executes cleanly and dispatches signed webhook payload.
+- Decisions: Implemented `RemotePolicyProvider` and `WebhookExporter` using standard library network utilities (`urllib.request`) and thread pools to ensure zero mandatory external dependencies for client runtimes.
+- Risks/follow-ups: none
+- Blocker/owner input: none
+- Commit/PR: none
+
+## 2026-07-24 — ALG-027 — Design Control Plane Architecture & API Specification
+
+- Actor: owner / interactive-agent
+- Status change: ready -> done
+- Scope completed:
+  1. Produced Phase 2 SaaS architecture specification document in `CONTROL_PLANE_SPEC.md`.
+  2. Defined Centralized Policy Synchronization protocol (polling + ETag validation + offline cache fallback).
+  3. Defined Multi-Agent FinOps Budget Aggregation API (`POST /v1/telemetry/steps`, `GET /v1/finops/budgets/{organization_id}`).
+  4. Designed signed Webhook delivery schema (`X-AgentLoopGuard-Signature`, HMAC-SHA256) for Slack/PagerDuty/Datadog alerting.
+  5. Designed Immutable Audit Vault data model using SHA-256 hash-chaining ($\text{Hash}_n = \text{SHA-256}(\text{Hash}_{n-1} \parallel \text{Timestamp} \parallel \text{Payload})$).
+  6. Documented complete OpenAPI 3.0 REST specification for all control plane endpoints.
+- Files changed:
+  - `CONTROL_PLANE_SPEC.md` (NEW)
+  - `BUILD_QUEUE.md`
+  - `BUILD_LOG.md`
+- Verification:
+  - Architecture and OpenAPI specification reviewed against Phase 2 commercial strategy (`COMMERCIAL_STRATEGY.md`) and SDK schema (`src/agentloopguard/schema.py`).
+  - `.venv/bin/python -m pytest` -> 98 passed in 0.10s.
+- Decisions: Control Plane Phase 2 SaaS specification approved; unblocks `ALG-028` (Remote policy & webhook exporter SDK client).
+- Risks/follow-ups: none
+- Blocker/owner input: Authorized by owner.
+- Commit/PR: none
+
 ## 2026-07-24 — ALG-026 — Package v0.1.0 Alpha Release and Tagged Git Commit
 
 - Actor: owner / interactive-agent

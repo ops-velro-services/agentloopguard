@@ -1,7 +1,10 @@
 """AgentLoopGuard SDK."""
 
 from agentloopguard import adapters as adapters
+from agentloopguard import client as client
 from agentloopguard.budget import BudgetTracker as BudgetTracker
+from agentloopguard.client.policy import RemotePolicyProvider as RemotePolicyProvider
+from agentloopguard.client.webhooks import WebhookExporter as WebhookExporter
 from agentloopguard.detectors import (
     CostVelocityDetector as CostVelocityDetector,
 )

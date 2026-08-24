@@ -263,18 +263,18 @@ Statuses: `ready`, `blocked`, `in-progress`, `done`, `cancelled`.
 
 ### ALG-027 — Design Control Plane architecture & API specification
 
-- Status: ready
+- Status: done
 - Auto-eligible: no
-- Depends on: ALG-018 (done), ALG-026
+- Depends on: ALG-018 (done), ALG-026 (done)
 - Scope: produce `CONTROL_PLANE_SPEC.md` defining Phase 2 SaaS architecture: centralized policy sync protocol, multi-agent FinOps budget aggregator API, Slack/PagerDuty webhook schema, and immutable audit vault data model.
 - Acceptance: complete OpenAPI / JSON-schema specification for control plane REST/gRPC endpoints and SDK remote policy polling protocol.
 - Verification: owner-approved architecture specification.
 
 ### ALG-028 — Implement SDK remote policy & webhook exporter client
 
-- Status: ready
+- Status: done
 - Auto-eligible: yes
-- Depends on: ALG-012 (done), ALG-027
+- Depends on: ALG-012 (done), ALG-027 (done)
 - Scope: add optional remote policy provider (`RemotePolicyProvider`) and webhook exporter (`WebhookExporter`) to Python SDK for syncing dynamic guard rules and pushing alerts to external HTTP endpoints without adding hard dependencies.
 - Acceptance: SDK can optionally fetch policies via HTTP/REST with local fallback if offline; webhook payload matches control plane schema.
 - Verification: unit tests with mock server fixtures.
