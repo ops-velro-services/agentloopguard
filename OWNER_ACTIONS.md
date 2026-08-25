@@ -89,6 +89,13 @@ action's status or record an owner decision.
 - Deliverable: recorded architecture approval.
 - Unblocks: ALG-022.
 
+### OWN-011 — Confirm commercial strategy withdrawn and archive repository
+
+- Status: pending
+- Added 2026-08-25: `COMMERCIAL_STRATEGY.md` (approved 2026-07-24) still records the commercial strategy as an active, approved decision memo — open-core SDK licensing plus a 2-tier paid Phase 2 Control Plane SaaS model — with no update reflecting a withdrawal. If the owner has in fact decided to withdraw the commercial strategy, that decision needs an explicit owner confirmation and, only then, an owner-performed archive of `ops-velro-services/agentloopguard` on GitHub. Archiving the repository is a human-only action and must not be automated.
+- Deliverable: owner confirms whether the commercial strategy is withdrawn; if confirmed, the owner (not automation) archives the GitHub repository and `COMMERCIAL_STRATEGY.md` is updated separately to record the withdrawal per its own status field.
+- Unblocks: repository archival action; any update to `COMMERCIAL_STRATEGY.md` status.
+
 ## Suggested owner work order
 
 1. OWN-001 and OWN-003 today; they directly affect truthful documentation.
